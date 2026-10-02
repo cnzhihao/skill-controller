@@ -1,0 +1,422 @@
+{
+  "collections": [
+    {
+      "name": "Palette",
+      "modes": [
+        "Any",
+        "Dark"
+      ],
+      "variables": [
+        {
+          "name": "background",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(1 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(1 0 0)",
+            "Dark": "oklch(0.145 0 0)"
+          }
+        },
+        {
+          "name": "foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.145 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.145 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "card",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(1 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(1 0 0)",
+            "Dark": "oklch(0.205 0 0)"
+          }
+        },
+        {
+          "name": "card-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.145 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.145 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "popover",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(1 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(1 0 0)",
+            "Dark": "oklch(0.205 0 0)"
+          }
+        },
+        {
+          "name": "popover-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.145 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.145 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "primary",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.205 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.205 0 0)",
+            "Dark": "oklch(0.922 0 0)"
+          }
+        },
+        {
+          "name": "primary-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.985 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.985 0 0)",
+            "Dark": "oklch(0.205 0 0)"
+          }
+        },
+        {
+          "name": "secondary",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.97 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.97 0 0)",
+            "Dark": "oklch(0.269 0 0)"
+          }
+        },
+        {
+          "name": "secondary-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.205 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.205 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "muted",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.97 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.97 0 0)",
+            "Dark": "oklch(0.269 0 0)"
+          }
+        },
+        {
+          "name": "muted-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.556 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.556 0 0)",
+            "Dark": "oklch(0.708 0 0)"
+          }
+        },
+        {
+          "name": "accent",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.97 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.97 0 0)",
+            "Dark": "oklch(0.269 0 0)"
+          }
+        },
+        {
+          "name": "accent-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.205 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.205 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "destructive",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.577 0.245 27.325)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.577 0.245 27.325)",
+            "Dark": "oklch(0.704 0.191 22.216)"
+          }
+        },
+        {
+          "name": "border",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.922 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.922 0 0)",
+            "Dark": "oklch(1 0 0 / 10%)"
+          }
+        },
+        {
+          "name": "input",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.922 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.922 0 0)",
+            "Dark": "oklch(1 0 0 / 15%)"
+          }
+        },
+        {
+          "name": "ring",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.708 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.708 0 0)",
+            "Dark": "oklch(0.556 0 0)"
+          }
+        },
+        {
+          "name": "radius",
+          "type": "COLOR",
+          "value": {
+            "raw": "0.625rem",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "0.625rem",
+            "Dark": "0.625rem"
+          }
+        },
+        {
+          "name": "sidebar",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.985 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.985 0 0)",
+            "Dark": "oklch(0.205 0 0)"
+          }
+        },
+        {
+          "name": "sidebar-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.145 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.145 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "sidebar-primary",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.205 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.205 0 0)",
+            "Dark": "oklch(0.488 0.243 264.376)"
+          }
+        },
+        {
+          "name": "sidebar-primary-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.985 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.985 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "sidebar-accent",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.97 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.97 0 0)",
+            "Dark": "oklch(0.269 0 0)"
+          }
+        },
+        {
+          "name": "sidebar-accent-foreground",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.205 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.205 0 0)",
+            "Dark": "oklch(0.985 0 0)"
+          }
+        },
+        {
+          "name": "sidebar-border",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.922 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.922 0 0)",
+            "Dark": "oklch(1 0 0 / 10%)"
+          }
+        },
+        {
+          "name": "sidebar-ring",
+          "type": "COLOR",
+          "value": {
+            "raw": "oklch(0.708 0 0)",
+            "space": "oklch"
+          },
+          "collections": [
+            "Palette"
+          ],
+          "modes": {
+            "Any": "oklch(0.708 0 0)",
+            "Dark": "oklch(0.556 0 0)"
+          }
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "source": "internal extract",
+    "note": "oklch 原值保留；Figma 导入前需转 sRGB（SwiftUI Asset 直接支持 display-p3/oklab 语义色）"
+  }
+}

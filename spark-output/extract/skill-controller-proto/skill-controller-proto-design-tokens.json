@@ -1,0 +1,346 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "skill-controller-proto · oklch grayscale + single destructive red",
+  "color": {
+    "background": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(1 0 0)",
+        "dark": "oklch(0.145 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.145 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "card": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(1 0 0)",
+        "dark": "oklch(0.205 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "card-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.145 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "popover": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(1 0 0)",
+        "dark": "oklch(0.205 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "popover-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.145 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "primary": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.205 0 0)",
+        "dark": "oklch(0.922 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "primary-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.985 0 0)",
+        "dark": "oklch(0.205 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.97 0 0)",
+        "dark": "oklch(0.269 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "secondary-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.205 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "muted": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.97 0 0)",
+        "dark": "oklch(0.269 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "muted-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.556 0 0)",
+        "dark": "oklch(0.708 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "accent": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.97 0 0)",
+        "dark": "oklch(0.269 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "accent-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.205 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "destructive": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.577 0.245 27.325)",
+        "dark": "oklch(0.704 0.191 22.216)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "border": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.922 0 0)",
+        "dark": "oklch(1 0 0 / 10%)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "input": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.922 0 0)",
+        "dark": "oklch(1 0 0 / 15%)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "ring": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.708 0 0)",
+        "dark": "oklch(0.556 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "radius": {
+      "$type": "color",
+      "$value": {
+        "default": "0.625rem",
+        "dark": "0.625rem"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.985 0 0)",
+        "dark": "oklch(0.205 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.145 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-primary": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.205 0 0)",
+        "dark": "oklch(0.488 0.243 264.376)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-primary-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.985 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-accent": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.97 0 0)",
+        "dark": "oklch(0.269 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-accent-foreground": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.205 0 0)",
+        "dark": "oklch(0.985 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-border": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.922 0 0)",
+        "dark": "oklch(1 0 0 / 10%)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    },
+    "sidebar-ring": {
+      "$type": "color",
+      "$value": {
+        "default": "oklch(0.708 0 0)",
+        "dark": "oklch(0.556 0 0)"
+      },
+      "$extensions": {
+        "figma.colorMode": "Any/Dark"
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "anchor": {
+      "$value": "10px"
+    },
+    "sm": {
+      "$value": "6px"
+    },
+    "md": {
+      "$value": "8px"
+    },
+    "lg": {
+      "$value": "10px"
+    },
+    "xl": {
+      "$value": "14px"
+    }
+  },
+  "spacing": {
+    "$type": "dimension",
+    "anchor": {
+      "$value": "4px"
+    },
+    "note": {
+      "$value": "Tailwind default scale; hot: 8/12/16/24"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "body": {
+        "$value": "'JetBrains Mono Variable', monospaced system fallback"
+      },
+      "heading": {
+        "$value": "= body (mono)"
+      }
+    },
+    "fontSize": {
+      "caption": {
+        "$value": "12px"
+      },
+      "body": {
+        "$value": "14px"
+      },
+      "cardTitle": {
+        "$value": "16px"
+      },
+      "pageTitle": {
+        "$value": "20px"
+      }
+    }
+  },
+  "layout": {
+    "detailPanelWidth": {
+      "$value": "360px"
+    },
+    "diffSheetWidth": {
+      "$value": "520px"
+    },
+    "minWindowWidth": {
+      "$value": "960px"
+    },
+    "zDetailOverlay": {
+      "$value": "70"
+    }
+  },
+  "motion": {
+    "stateTransition": {
+      "$value": "150ms ease-in-out"
+    }
+  }
+}

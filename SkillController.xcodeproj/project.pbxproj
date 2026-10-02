@@ -1,0 +1,400 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5AAAAAAAAAAAAAAAAAAAAAA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AEEEEEEEEEEEEEEEEEEEE1 /* Assets.xcassets */; };
+		5AAAAAAAAAAAAAAAAAAAAAA1 /* SkillControllerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A9999999999999999999991 /* SkillControllerCore */; };
+		5AAAAAAAAAAAAAAAAAAAAAA2 /* SkillControllerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A9999999999999999999991 /* SkillControllerCore */; };
+		5AAAAAAAAAAAAAAAAAAAAAA3 /* SkillControllerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A9999999999999999999991 /* SkillControllerCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5A3333333333333333333331 /* SkillController */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = App/SkillController;
+			sourceTree = "<group>";
+		};
+		5A3333333333333333333332 /* skillctl */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sources/skillctl;
+			sourceTree = "<group>";
+		};
+		5A3333333333333333333333 /* SkillControllerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Tests/SkillControllerTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5A6666666666666666666661 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AAAAAAAAAAAAAAAAAAAAAA1 /* SkillControllerCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A6666666666666666666662 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AAAAAAAAAAAAAAAAAAAAAA2 /* SkillControllerCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A6666666666666666666663 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AAAAAAAAAAAAAAAAAAAAAA3 /* SkillControllerCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5A2222222222222222222222 = {
+			isa = PBXGroup;
+			children = (
+				5AEEEEEEEEEEEEEEEEEEEE1 /* Assets.xcassets */,
+				5A3333333333333333333331 /* SkillController */,
+				5A3333333333333333333332 /* skillctl */,
+				5A3333333333333333333333 /* SkillControllerTests */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5A4444444444444444444441 /* SkillController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5ABBBBBBBBBBBBBBBBBBBBB2 /* Build configuration list for PBXNativeTarget "SkillController" */;
+			buildPhases = (
+				5A5555555555555555555551 /* Sources */,
+				5A6666666666666666666661 /* Frameworks */,
+				5A7777777777777777777771 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5A3333333333333333333331 /* SkillController */,
+			);
+			packageProductDependencies = (
+				5A9999999999999999999991 /* SkillControllerCore */,
+			);
+			name = SkillController;
+			productName = SkillController;
+			productReference = 5ADDDDDDDDDDDDDDDDDDDDD1 /* SkillController.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5A4444444444444444444442 /* skillctl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5ABBBBBBBBBBBBBBBBBBBBB3 /* Build configuration list for PBXNativeTarget "skillctl" */;
+			buildPhases = (
+				5A5555555555555555555552 /* Sources */,
+				5A6666666666666666666662 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5A3333333333333333333332 /* skillctl */,
+			);
+			packageProductDependencies = (
+				5A9999999999999999999991 /* SkillControllerCore */,
+			);
+			name = skillctl;
+			productName = skillctl;
+			productReference = 5ADDDDDDDDDDDDDDDDDDDDD2 /* skillctl */;
+			productType = "com.apple.product-type.tool";
+		};
+		5A4444444444444444444443 /* SkillControllerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5ABBBBBBBBBBBBBBBBBBBBB4 /* Build configuration list for PBXNativeTarget "SkillControllerTests" */;
+			buildPhases = (
+				5A5555555555555555555553 /* Sources */,
+				5A6666666666666666666663 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5A3333333333333333333333 /* SkillControllerTests */,
+			);
+			packageProductDependencies = (
+				5A9999999999999999999991 /* SkillControllerCore */,
+			);
+			name = SkillControllerTests;
+			productName = SkillControllerTests;
+			productReference = 5ADDDDDDDDDDDDDDDDDDDDD3 /* SkillControllerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5A1111111111111111111111 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					5A4444444444444444444443 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 5ABBBBBBBBBBBBBBBBBBBBB1 /* Build configuration list for PBXProject "SkillController" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			fileSystemSynchronizedGroups = (
+				5A3333333333333333333331 /* SkillController */,
+				5A3333333333333333333332 /* skillctl */,
+				5A3333333333333333333333 /* SkillControllerTests */,
+			);
+			mainGroup = 5A2222222222222222222222;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5A2222222222222222222222;
+			projectDirPath = "";
+			projectRoot = "";
+			packageReferences = (
+				5A8888888888888888888881 /* XCLocalSwiftPackageReference "." */,
+			);
+			targets = (
+				5A4444444444444444444441 /* SkillController */,
+				5A4444444444444444444442 /* skillctl */,
+				5A4444444444444444444443 /* SkillControllerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5A7777777777777777777771 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AAAAAAAAAAAAAAAAAAAAAA4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5A5555555555555555555551 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A5555555555555555555552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A5555555555555555555553 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXProductReference section */
+		5AEEEEEEEEEEEEEEEEEEEE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = App/Assets.xcassets; sourceTree = "<group>"; };
+		5ADDDDDDDDDDDDDDDDDDDDD1 /* SkillController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkillController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5ADDDDDDDDDDDDDDDDDDDDD2 /* skillctl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = skillctl; sourceTree = BUILT_PRODUCTS_DIR; };
+		5ADDDDDDDDDDDDDDDDDDDDD3 /* SkillControllerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SkillControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXProductReference section */
+
+/* Begin XCConfigurationList section */
+		5ABBBBBBBBBBBBBBBBBBBBB1 /* Build configuration list for PBXProject "SkillController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5ACCCCCCCCCCCCCCCCCCCCC1 /* Debug */,
+				5ACCCCCCCCCCCCCCCCCCCCC2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5ABBBBBBBBBBBBBBBBBBBBB2 /* Build configuration list for PBXNativeTarget "SkillController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5ADDDDDDDDDDDDDDDDDDDDDA /* Debug */,
+				5ADDDDDDDDDDDDDDDDDDDDDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5ABBBBBBBBBBBBBBBBBBBBB3 /* Build configuration list for PBXNativeTarget "skillctl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5ADDDDDDDDDDDDDDDDDDDDDC /* Debug */,
+				5ADDDDDDDDDDDDDDDDDDDDDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5ABBBBBBBBBBBBBBBBBBBBB4 /* Build configuration list for PBXNativeTarget "SkillControllerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5ADDDDDDDDDDDDDDDDDDDDDE /* Debug */,
+				5ADDDDDDDDDDDDDDDDDDDDDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCBuildConfiguration section */
+		5ACCCCCCCCCCCCCCCCCCCCC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		5ACCCCCCCCCCCCCCCCCCCCC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				PRODUCT_BUNDLE_IDENTIFIER = cn.zhihao.SkillController;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				PRODUCT_BUNDLE_IDENTIFIER = cn.zhihao.SkillController;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.zhihao.SkillControllerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5ADDDDDDDDDDDDDDDDDDDDDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.zhihao.SkillControllerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5A8888888888888888888881 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ".";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5A9999999999999999999991 /* SkillControllerCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A8888888888888888888881 /* XCLocalSwiftPackageReference "." */;
+			productName = SkillControllerCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+	};
+	rootObject = 5A1111111111111111111111 /* Project object */;
+}

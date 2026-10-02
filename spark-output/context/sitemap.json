@@ -1,0 +1,147 @@
+{
+  "skill": "sitemap",
+  "generated_at": "2026-09-19T05:58:00Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "platform": "web",
+  "primary_navigation": [
+    {
+      "id": "nav-inventory",
+      "label": "清单",
+      "route": "/inventory",
+      "icon_hint": "shippingbox",
+      "children": []
+    },
+    {
+      "id": "nav-ledger",
+      "label": "挂载账",
+      "route": "/ledger",
+      "icon_hint": "list-ordered",
+      "children": []
+    },
+    {
+      "id": "nav-rollback",
+      "label": "回退",
+      "route": "/rollback",
+      "icon_hint": "history",
+      "children": []
+    },
+    {
+      "id": "nav-settings",
+      "label": "设置",
+      "route": "/settings",
+      "icon_hint": "settings",
+      "children": []
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-inventory",
+      "route": "/inventory",
+      "label": "全盘清单（默认首页）",
+      "purpose": "打开即满的全盘清单；视角切换=按 Agent/按项目/按层级，对象过滤=Skill/MCP，同一列表模型",
+      "parent": "nav-inventory",
+      "access": "public",
+      "related_features": ["信息架构 IA"],
+      "related_stories": ["story-1", "story-2", "story-3", "story-6"]
+    },
+    {
+      "id": "page-item-detail",
+      "route": "/inventory/item/[id]",
+      "label": "条目详情栏（右栏/抽屉）",
+      "purpose": "单条 Skill/MCP 的归属、来源、挂载变动、静态触发词重叠并列、回挂/删除入口",
+      "parent": "nav-inventory",
+      "access": "public",
+      "related_features": ["信息架构 IA", "数据可视化"],
+      "related_stories": ["story-1", "story-3", "story-4", "story-5"]
+    },
+    {
+      "id": "page-ledger",
+      "route": "/ledger",
+      "label": "挂载账",
+      "purpose": "纯文件层观测：零挂载清单 / 挂载变动时间线 / 静态重叠对并列——只摆数，零观点，不做调用层推断",
+      "parent": "nav-ledger",
+      "access": "public",
+      "related_features": ["数据可视化"],
+      "related_stories": ["story-5"]
+    },
+    {
+      "id": "page-rollback-log",
+      "route": "/rollback/log",
+      "label": "操作日志（Tab）",
+      "purpose": "按时间/按 Agent 查每一次读写，一步撤销",
+      "parent": "nav-rollback",
+      "access": "public",
+      "related_features": ["交互设计"],
+      "related_stories": ["story-4"]
+    },
+    {
+      "id": "page-rollback-trash",
+      "route": "/rollback/trash",
+      "label": "回收站（Tab）",
+      "purpose": "≥30 天保留窗内的被删条目与恢复",
+      "parent": "nav-rollback",
+      "access": "public",
+      "related_features": ["交互设计"],
+      "related_stories": ["story-4"]
+    },
+    {
+      "id": "page-settings",
+      "route": "/settings",
+      "label": "设置",
+      "purpose": "扫描范围、回收站保留窗、Agent CLI 安装入口——刻意极小，不做调用解析器",
+      "parent": "nav-settings",
+      "access": "public",
+      "related_features": ["交互设计"],
+      "related_stories": ["story-3", "story-6"]
+    },
+    {
+      "id": "overlay-disk-auth",
+      "route": "sheet:disk-access",
+      "label": "首次全盘访问授权 Sheet",
+      "purpose": "冷启动一次性 macOS 文件访问授权，覆盖层不占导航层级",
+      "parent": null,
+      "access": "public",
+      "related_features": ["信息架构 IA"],
+      "related_stories": ["story-1"]
+    },
+    {
+      "id": "overlay-assembly-diff",
+      "route": "sheet:assembly-diff",
+      "label": "装配 diff Sheet",
+      "purpose": "「昨天 Agent 带来了哪些、来源是哪」的验收面，含拉取失败痕迹",
+      "parent": null,
+      "access": "public",
+      "related_features": ["交互设计"],
+      "related_stories": ["story-2"]
+    },
+    {
+      "id": "overlay-write-error",
+      "route": "toast:write-error",
+      "label": "写入失败/冲突痕迹卡",
+      "purpose": "CLI/工具写回失败时在清单留明确痕迹，不静默",
+      "parent": null,
+      "access": "public",
+      "related_features": ["交互设计"],
+      "related_stories": ["story-2", "story-3", "story-6"]
+    }
+  ],
+  "key_flows": [
+    {
+      "name": "冷启动即满",
+      "page_sequence": ["overlay-disk-auth", "page-inventory", "page-item-detail"]
+    },
+    {
+      "name": "Agent 自装配验收（⭐ 关键假设）",
+      "page_sequence": ["page-inventory", "overlay-assembly-diff", "page-rollback-log"]
+    },
+    {
+      "name": "数据化瘦身",
+      "page_sequence": ["page-ledger", "page-inventory", "page-rollback-trash"]
+    }
+  ],
+  "metadata": {
+    "depth_max": 3,
+    "page_count": 9,
+    "platform_notes": "macOS 原生 SwiftUI（NavigationSplitView 侧栏三段式）；route 为应用内导航的逻辑映射；单用户本地无鉴权，access 一律 public。硬约束：工具拿不到的信息不做——账本仅文件层挂载观测，调用层/会话解析器明确 out of scope（2026-09-19 用户决策）"
+  }
+}

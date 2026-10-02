@@ -1,0 +1,21 @@
+# SwiftPM
+.build/
+# spike 二进制
+docs/spike/tcc-spike
+docs/spike/*.o
+# macOS
+.DS_Store
+# Xcode（未来加入工程后）
+xcuserdata/
+DerivedData/
+
+# 本地构建产物
+build/
+__pycache__/
+*.pyc
+
+# 出表趟的本地产物：全集名单切片，可从 `skillctl list` 随时重跑，不入仓
+spark-output/collections/*.tsv
+
+# thinCoder 工程配置（本机路径），不入仓
+PROJECT-MANIFEST.json

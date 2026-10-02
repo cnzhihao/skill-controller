@@ -1,0 +1,93 @@
+{
+  "skill": "check",
+  "generated_at": "2026-09-19T07:15:04Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "target": "skill-controller-proto src/flows（F1×3屏 + F2×4屏 + Shell）",
+  "mode": "C（定向验证）+10类补充",
+  "rulings": [
+    {
+      "item": "内容区不限宽",
+      "verdict": "放行",
+      "reason": "数据面服从窗口宽度是桌面语义；所有阅读型容器已限宽；SwiftUI 沿用"
+    }
+  ],
+  "findings": [
+    {
+      "category": "accessibility",
+      "severity": "major",
+      "description": "清单行与装配列表行仅 onClick，键盘不可聚焦不可触发",
+      "suggestion": "行加 tabIndex+role=button+onKeyDown(Enter/Space)，或行尾显式详情按钮",
+      "location": "skill-controller-proto/src/flows/flow-1/flow1-cold-start.tsx (Screen2 TableRow) / flow-2 (Screen1 列表行)",
+      "status": "fixed-2026-09-19"
+    },
+    {
+      "category": "edge-states",
+      "severity": "major",
+      "description": "扫描缺部分降级态：单目录无权限/JSON 解析失败未表达，只有全授权/全拒绝两态",
+      "suggestion": "清单顶部加中性降级横幅；完整异常矩阵交 /edge",
+      "location": "flow1-cold-start.tsx Screen2_Inventory",
+      "status": "fixed-2026-09-19"
+    },
+    {
+      "category": "feedback",
+      "severity": "minor",
+      "description": "卸下/恢复挂载按钮仅 toast 不更新徽章与时间线（原型保真度）",
+      "suggestion": "本地状态更新或标注只读演示",
+      "location": "flow1 Screen3 动作区"
+    },
+    {
+      "category": "copy",
+      "severity": "minor",
+      "description": "装配/挂上/卸下/卸载 动词漂移，banner、diff、详情三处不一致",
+      "suggestion": "两级词汇：装配（Agent 行为）/挂上·卸下（条目状态）",
+      "location": "flow1+flow2 全部文案",
+      "status": "fixed-2026-09-19"
+    },
+    {
+      "category": "visual-hierarchy",
+      "severity": "minor",
+      "description": "详情区 h1→h3 跳级",
+      "suggestion": "改 h2 或补中间标题层",
+      "location": "flow1 Screen3_ItemDetail",
+      "status": "fixed-2026-09-19"
+    },
+    {
+      "category": "responsive",
+      "severity": "minor",
+      "description": "Sheet520px+详情360px 在 <900px 窗口重叠",
+      "suggestion": "声明最小窗口宽度 960px（原型与 SwiftUI 同）",
+      "location": "flow2 容器"
+    },
+    {
+      "category": "ia",
+      "severity": "minor",
+      "description": "侧栏『装配验收·演示』为 sitemap 外第 5 项",
+      "suggestion": "原型豁免；不得带入原生实现",
+      "location": "skill-controller-app.tsx nav"
+    },
+    {
+      "category": "flow-continuity",
+      "severity": "minor",
+      "description": "gate 状态机存在死值 'none'，无入口无出口",
+      "suggestion": "删除，或接『已有授权记录』直入分支",
+      "location": "flow1 Flow1_ColdStart",
+      "status": "fixed-2026-09-19"
+    },
+    {
+      "category": "edge-states",
+      "severity": "minor",
+      "description": "清单行 description 无 truncate，超长文案撑高行",
+      "suggestion": "加 truncate（diff 行已做，对齐）",
+      "location": "flow1 Screen2 名称列",
+      "status": "fixed-2026-09-19"
+    }
+  ],
+  "summary": {
+    "blocker": 0,
+    "major": 2,
+    "minor": 7,
+    "pass": 2,
+    "open_major": 0,
+    "open_minor": 3
+  }
+}

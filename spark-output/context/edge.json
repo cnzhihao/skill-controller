@@ -1,0 +1,370 @@
+{
+  "skill": "edge",
+  "generated_at": "2026-09-19T07:24:17Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "target_flows": [
+    "Cold Start",
+    "Assembly Review",
+    "rollback/ledger/settings（规范先行）"
+  ],
+  "copy_dao": [
+    "只报总量不报风险",
+    "中性色默认，destructive 红全应用仅 error-disk-full 一处",
+    "工具拿不到的不做（账本起点诚实态）",
+    "空态四型分开：首次/搜索/过滤/数据起点"
+  ],
+  "states_matrix": [
+    {
+      "screen": "DiskAccessGate (F1-S1)",
+      "screen_id": "overlay-disk-auth",
+      "states": [
+        {
+          "state_type": "loading-submit",
+          "required": true,
+          "severity": "must",
+          "design_description": "「授权并扫描」按下：按钮 disabled+spinner，文案「正在建立索引…」；期间 Dialog 其余控件不可交互",
+          "fallback_behavior": "防重复触发；索引后台继续",
+          "visual_hint": "Button disabled + Loader2 16px",
+          "copy_hint": "正在建立索引…",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "error-permission",
+          "required": false,
+          "severity": "条件态（2026-09-25 裁决，语义以 edge md 行为准）",
+          "design_description": "macOS TCC 层被拒（应用内点了授权但系统仍拒绝）：Dialog 内中性说明行 + 深链按钮",
+          "fallback_behavior": "跳系统设置授权页；返回 App 自动重试",
+          "visual_hint": "inline 提示行（muted 底）+ Button(secondary)",
+          "copy_hint": "系统还没放行 · 在系统设置中允许后会自动重试",
+          "related_story": "story-1",
+          "adjudication": "2026-09-25 裁决：非沙箱无 TCC 门槛（docs/agent-recon.md spike），该态不可达；触发条件回归时恢复 must"
+        }
+      ]
+    },
+    {
+      "screen": "Inventory (F1-S2)",
+      "screen_id": "page-inventory",
+      "states": [
+        {
+          "state_type": "loading-initial",
+          "required": true,
+          "severity": "must",
+          "design_description": "分层加载：<1.5s 用 8 行 Skeleton；>3s 切「增量优先」——先出已扫到位置的结果，其余静默并入，页头计数提示「索引持续更新中」",
+          "fallback_behavior": "不干等；新条目并入不打乱滚动位置",
+          "visual_hint": "Skeleton→渐进插入 + tabular-nums 计数",
+          "copy_hint": "973 Skills · 索引持续更新中",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "empty-collection",
+          "required": true,
+          "severity": "must",
+          "design_description": "授权成功但全盘 0 条目（新机器）：居中卡+解释+两出口（查扫描范围/等 Agent 首次装配）",
+          "fallback_behavior": "知道不是坏了而是真没有",
+          "visual_hint": "Card max-w-sm 中性",
+          "copy_hint": "这台机器还没有 Skill。装配是你未来 Agent 的事，也可以先检查扫描范围",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "empty-filter",
+          "required": true,
+          "severity": "should",
+          "design_description": "对象过滤（MCP）后为 0：不复用搜索空态文案，出口「恢复全部对象」",
+          "fallback_behavior": "一键回全量",
+          "visual_hint": "行内提示 + Button(ghost)",
+          "copy_hint": "没有 MCP。恢复全部对象看看",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "error-partial-degrade",
+          "required": true,
+          "severity": "must",
+          "design_description": "（已实现横幅）补出口：每行可「忽略此位置」，忽略后不再每日提示，设置页可逆",
+          "fallback_behavior": "降级信息不升级为每日噪音",
+          "visual_hint": "横幅行尾 ghost「忽略」",
+          "copy_hint": "忽略此位置（可在设置中恢复）",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "error-disk-full",
+          "required": true,
+          "severity": "must",
+          "design_description": "磁盘满致回收站写不进——全应用唯一允许 destructive 红的场景：删除确认升级「无法移入回收站，此删除不可恢复」+ 键入名称确认",
+          "fallback_behavior": "不可逆事实如实告知",
+          "visual_hint": "AlertDialog destructive + 输入确认",
+          "copy_hint": "磁盘空间不足，该条目将无法恢复。确认仍要删除？",
+          "related_story": "story-4"
+        },
+        {
+          "state_type": "boundary-long-text",
+          "required": true,
+          "severity": "must",
+          "design_description": "名称>40字/描述>80字：truncate + tooltip 全文",
+          "fallback_behavior": "不破行高",
+          "visual_hint": "truncate max-w + Tooltip",
+          "copy_hint": "—",
+          "related_story": "story-1"
+        },
+        {
+          "state_type": "boundary-overflow",
+          "required": false,
+          "severity": "nice",
+          "design_description": "计数≥1000 显示 1.2K 缩写",
+          "fallback_behavior": "—",
+          "visual_hint": "tabular-nums",
+          "copy_hint": "1.2K",
+          "related_story": "story-1"
+        }
+      ]
+    },
+    {
+      "screen": "ItemDetail (F1-S3 共享)",
+      "screen_id": "page-item-detail",
+      "states": [
+        {
+          "state_type": "error-target-vanished",
+          "required": true,
+          "severity": "must",
+          "design_description": "面板开着时条目被另一 Agent CLI 移走/删除：内容替换为中性说明+唯一出口「关闭」；清单行同步消失",
+          "fallback_behavior": "不展示幽灵数据不报错",
+          "visual_hint": "面板 body 换一句 muted",
+          "copy_hint": "这条目刚刚被 Claude Code 移出了清单（日志可查）",
+          "related_story": "story-3"
+        },
+        {
+          "state_type": "loading-submit",
+          "required": true,
+          "severity": "must",
+          "design_description": "卸下/回挂：按钮 loading→成功后徽章与时间线即时更新（修 check Minor#3）",
+          "fallback_behavior": "状态原地更新，不止 toast",
+          "visual_hint": "Button disabled+spinner；Badge 150ms 过渡",
+          "copy_hint": "卸下中…",
+          "related_story": "story-3"
+        },
+        {
+          "state_type": "boundary-null",
+          "required": true,
+          "severity": "should",
+          "design_description": "description 缺失显示「SKILL.md 未写描述」，不显示空/undefined",
+          "fallback_behavior": "—",
+          "visual_hint": "muted 一句",
+          "copy_hint": "SKILL.md 未写描述",
+          "related_story": "story-1"
+        }
+      ]
+    },
+    {
+      "screen": "ProjectBanner (F2-S1)",
+      "screen_id": "page-inventory#banner",
+      "states": [
+        {
+          "state_type": "empty-assembly",
+          "required": false,
+          "severity": "nice",
+          "design_description": "CLI 跑了但 0 增 0 删：Banner 如实一句「Codex 检查过了，没带来新东西」",
+          "fallback_behavior": "事实陈述非错误",
+          "visual_hint": "复用 Banner variant",
+          "copy_hint": "检查过了，没带来新东西",
+          "related_story": "story-2"
+        }
+      ]
+    },
+    {
+      "screen": "AssemblyDiff (F2-S2)",
+      "screen_id": "overlay-assembly-diff",
+      "states": [
+        {
+          "state_type": "error-concurrent-change",
+          "required": true,
+          "severity": "must",
+          "design_description": "diff 展示期间清单又变：顶部中性提示「清单在你验收期间又变了 · 重新加载」，重载前禁用「关闭并验收」防旧快照验收",
+          "fallback_behavior": "避免对旧状态验收",
+          "visual_hint": "提示条 + Button；primary disabled",
+          "copy_hint": "清单已更新。重新加载后再验收",
+          "related_story": "story-2"
+        },
+        {
+          "state_type": "retry-failed-again",
+          "required": true,
+          "severity": "should",
+          "design_description": "冲突行重试仍败：行文案转「重试未成功 · 已记入日志」+日志入口，不加红",
+          "fallback_behavior": "失败不吞不放大",
+          "visual_hint": "行内 muted+链接",
+          "copy_hint": "已记入日志，可稍后再来或直接处理",
+          "related_story": "story-2"
+        },
+        {
+          "state_type": "boundary-huge-diff",
+          "required": true,
+          "severity": "should",
+          "design_description": "单次装配>30 项：分组折叠前 10 +「展开全部 N」；验收粒度仍支持单条",
+          "fallback_behavior": "千级世界不爆炸",
+          "visual_hint": "Collapse+count",
+          "copy_hint": "展开全部 80 项",
+          "related_story": "story-2"
+        }
+      ]
+    },
+    {
+      "screen": "RestoreConfirm (F2-S4)",
+      "screen_id": "overlay-restore-confirm",
+      "states": [
+        {
+          "state_type": "loading-submit",
+          "required": true,
+          "severity": "must",
+          "design_description": "「确认恢复」按下：按钮 loading「恢复中…」，期间不可关闭",
+          "fallback_behavior": "防中断回滚",
+          "visual_hint": "AlertDialogAction disabled+spinner",
+          "copy_hint": "恢复中…",
+          "related_story": "story-4"
+        },
+        {
+          "state_type": "error-partial-restore",
+          "required": true,
+          "severity": "must",
+          "design_description": "部分条目恢复失败（目录被占）：结果态如实「3/5 项已恢复 · 2 项未能恢复（已记日志）」+日志跳转；Banner 进「部分恢复」三态",
+          "fallback_behavior": "底线承诺失败也诚实",
+          "visual_hint": "结果条 muted + Link",
+          "copy_hint": "未能恢复的 2 项保留在日志中，可重试",
+          "related_story": "story-4"
+        }
+      ]
+    },
+    {
+      "screen": "回退页（占位·规范先行）",
+      "screen_id": "page-rollback",
+      "states": [
+        {
+          "state_type": "empty-log",
+          "required": true,
+          "severity": "must",
+          "design_description": "无任何变动：「近 30 天没有任何删除与挂载变动」——不是「暂无数据」",
+          "fallback_behavior": "空也是事实",
+          "visual_hint": "居中一句 muted",
+          "copy_hint": "近 30 天没有任何变动",
+          "related_story": "story-4"
+        },
+        {
+          "state_type": "error-second-delete",
+          "required": true,
+          "severity": "must",
+          "design_description": "回收站条目被 Finder 清空：恢复按钮置灰+行内「目标已不存在」；日志保留仅审计",
+          "fallback_behavior": "恢复按钮不撒谎",
+          "visual_hint": "Button disabled + opacity+cursor",
+          "copy_hint": "目标已不在回收站，无法恢复",
+          "related_story": "story-4"
+        },
+        {
+          "state_type": "boundary-long-log",
+          "required": true,
+          "severity": "should",
+          "design_description": ">200 条日志：按日分组折叠+虚拟列表",
+          "fallback_behavior": "千级可浏览",
+          "visual_hint": "日期分组 Accordion",
+          "copy_hint": "—",
+          "related_story": "story-4"
+        }
+      ]
+    },
+    {
+      "screen": "挂载账页（占位·规范先行）",
+      "screen_id": "page-ledger",
+      "states": [
+        {
+          "state_type": "empty-first-day",
+          "required": true,
+          "severity": "must",
+          "design_description": "数据起点诚实态：「账本从 2026-09-19 开始记录，此前的挂载无从得知」防误读零频",
+          "fallback_behavior": "零幻觉口径落点",
+          "visual_hint": "顶部说明条（一次性可关）",
+          "copy_hint": "以下数字只反映安装之后的挂载",
+          "related_story": "story-5"
+        },
+        {
+          "state_type": "boundary-sparse",
+          "required": true,
+          "severity": "should",
+          "design_description": "记录<7 天：表头注「仅 5 天数据」，不做高低暗示",
+          "fallback_behavior": "—",
+          "visual_hint": "表头 muted 注记",
+          "copy_hint": "仅 5 天数据",
+          "related_story": "story-5"
+        },
+        {
+          "state_type": "loading-aggregate",
+          "required": false,
+          "severity": "nice",
+          "design_description": "90 天聚合本地 <200ms 可不做加载态",
+          "fallback_behavior": "—",
+          "visual_hint": "—",
+          "copy_hint": "—",
+          "related_story": "story-5"
+        }
+      ]
+    },
+    {
+      "screen": "设置页（规范先行）",
+      "screen_id": "page-settings",
+      "states": [
+        {
+          "state_type": "error-validation",
+          "required": true,
+          "severity": "should",
+          "design_description": "扫描路径不存在：字段下 inline 中性提示「该路径不存在，已跳过保存」实时提示",
+          "fallback_behavior": "—",
+          "visual_hint": "Field 下 inline",
+          "copy_hint": "该路径不存在",
+          "related_story": "story-3"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "total_screens": 9,
+    "total_states_planned": 25,
+    "by_category": {
+      "empty": 5,
+      "loading": 5,
+      "error": 9,
+      "boundary": 6,
+      "permission": 1,
+      "offline": 0
+    },
+    "offline_note": "纯本地 App 离线类 N/A；唯一网络面=字体 CDN（实现期本地化）",
+    "critical_missing": [
+      {
+        "id": "G1",
+        "gap": "Inventory 降级横幅缺『忽略此位置』出口"
+      },
+      {
+        "id": "G2",
+        "gap": "ItemDetail 并发消失态未设计"
+      },
+      {
+        "id": "G3",
+        "gap": "AssemblyDiff 验收期间清单再变化无并发提示"
+      },
+      {
+        "id": "G4",
+        "gap": "RestoreConfirm loading 与部分恢复失败态缺位"
+      },
+      {
+        "id": "G5",
+        "gap": "磁盘满→回收站失效→删除不可逆（唯一 destructive 场景）"
+      },
+      {
+        "id": "G6",
+        "gap": "Ledger 数据起点诚实态缺位"
+      },
+      {
+        "id": "G7",
+        "gap": "回收站被 Finder 清空后的二次删除灰态"
+      },
+      {
+        "id": "G8",
+        "gap": "卸下/回挂提交态与状态即时更新"
+      }
+    ]
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "skill": "extract",
+  "generated_at": "2026-09-19T07:48:33Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "mode": "internal",
+  "mode_resolved_by": "argument",
+  "target_framework": [
+    "w3c-tokens",
+    "css-vars",
+    "figma-vars",
+    "design-md"
+  ],
+  "meta": {
+    "source": {
+      "type": "internal",
+      "path": "skill-controller-proto"
+    },
+    "internal_scan": {
+      "config_files_found": [
+        "package.json",
+        "components.json",
+        "src/index.css",
+        "vite.config.ts"
+      ],
+      "css_in_js_engine": "none",
+      "css_in_js_files_parsed": 0,
+      "token_priority": "tailwind.config(absent) > theme.ts(absent) > CSS变量(index.css:root/.dark) > 代码字面值"
+    },
+    "ask_answers": {
+      "deliverable_choice": "A",
+      "confirmed_at": "2026-09-19T07:48:33Z"
+    }
+  },
+  "fallback_applied": [
+    "no-sparkdesign-baseline"
+  ],
+  "match_method": "naming-only(baseline=shadcn-neutral)",
+  "tokens": {
+    "color": {
+      "light_count": 32,
+      "dark_count": 31,
+      "semantics": "全灰阶 chroma=0；destructive 唯一彩色；dark.sidebar-primary 蓝色为预设残留，已记偏差"
+    },
+    "typography": {
+      "family": "JetBrains Mono Variable(本地)",
+      "mono_global": true
+    },
+    "spacing": {
+      "anchor_px": 4
+    },
+    "radius": {
+      "anchor": "0.625rem"
+    },
+    "shadow": {
+      "style": "border-dominant, single overlay shadow-2xl"
+    },
+    "motion": {
+      "transition": "150ms; tw-animate-css 覆层"
+    },
+    "breakpoint": {
+      "note": "桌面 App min-width 960，响应式让位于窗口常量"
+    },
+    "z_index": {
+      "custom": [
+        {
+          "name": "z.detail-overlay",
+          "value": 70,
+          "usage": 1
+        }
+      ]
+    },
+    "icon_set": {
+      "name": "lucide-react",
+      "size": "16px stroke"
+    },
+    "gradient": null,
+    "state": {
+      "focus_visible": "ring 全局",
+      "hover": "bg-muted"
+    }
+  },
+  "usage_evidence": [
+    {
+      "token": "muted-foreground",
+      "count": 54
+    },
+    {
+      "token": "bg-muted",
+      "count": 24
+    },
+    {
+      "token": "outline-variant(button/badge)",
+      "count": 12
+    },
+    {
+      "token": "gap-2",
+      "count": 25
+    },
+    {
+      "token": "p-4",
+      "count": 12
+    }
+  ],
+  "sparkdesign_diff": {
+    "baseline_note": "SparkDesign baseline 缺席 → 对照基线换用 shadcn neutral 预设默认值（components.json / lyra preset）",
+    "matched": [
+      "background/foreground/muted/border/ring/destructive 等 28 语义名与 shadcn 默认命名一致(naming equal)"
+    ],
+    "semantic_match": [
+      {
+        "project_token": "radius.lg(10px)",
+        "counterpart": "组件默认 rounded-xl 场景",
+        "evidence": "usage-inference",
+        "confidence": "medium"
+      }
+    ],
+    "project_specific": [
+      {
+        "token": "layout.detailPanelWidth=360 / diffSheetWidth=520",
+        "reason": "项目面板宪法尺寸（edge 规格来源）"
+      },
+      {
+        "token": "z.detail-overlay=70",
+        "reason": "diff 之上浮详情（G3 裁定）"
+      },
+      {
+        "token": "destructive 单点使用约定",
+        "reason": "设计约束，非通用 DS token"
+      }
+    ],
+    "proposed_increment": [
+      {
+        "token": "color.destructive-only-policy",
+        "risk": "medium",
+        "usage_count": 1,
+        "rationale": "『红色唯一豁免=不可逆』是可移植的语义规范，若 SparkDesign 收录语义色策略可评审"
+      },
+      {
+        "token": "typography.mono-global",
+        "risk": "low",
+        "usage_count": 78,
+        "rationale": "等宽全局+灰阶作为零观点工具人格，usage 极高"
+      }
+    ]
+  },
+  "handoff_hint": "# 设计上下文\n本项目的视觉语言已由 /extract 固化：\n- design.md: spark-output/extract/skill-controller-proto/skill-controller-proto-design-language.md（§18 为 SwiftUI 映射表）\n- tokens: 同目录 -design-tokens.json / -variables.css / -figma-variables.json\nSwiftUI 实现规则：颜色/圆角/间距只从 token 命名取；Asset Catalog 双 appearance 按 28 变量照抄命名；每屏 primary ≤1；destructive 红全应用仅『磁盘满不可逆删除』一处；全局 .fontDesign(.monospaced) + 数字 .monospacedDigit()。",
+  "artifacts": {
+    "design_md": "spark-output/extract/skill-controller-proto/skill-controller-proto-design-language.md",
+    "tokens": [
+      "-design-tokens.json",
+      "-variables.css",
+      "-figma-variables.json"
+    ]
+  }
+}

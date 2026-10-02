@@ -1,0 +1,73 @@
+{
+  "skill": "prd",
+  "generated_at": "2026-09-19T07:32:27Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "direction": "文件管理器 + Agent 接口（含 MCP，挂载账暗线）",
+  "prd_file": "spark-output/prd/skill-controller.md",
+  "sections_summary": {
+    "summary": "SwiftUI 原生 macOS 本地应用：打开即满的全盘 Skill/MCP 清单 + 管理动作全走 skillctl CLI 外包给 Agent；人只看不管",
+    "primary_persona": "智昊",
+    "product_goal": "让每个 Agent 在任何时刻只加载对的 Skill 集合，且这件事不由人来管",
+    "success_metrics": [
+      {
+        "metric": "每 Agent 生效挂载集",
+        "target": "<50",
+        "timeframe": "90 天"
+      },
+      {
+        "metric": "新项目装配人工耗时",
+        "target": "半天→一条命令",
+        "timeframe": "上线即测"
+      },
+      {
+        "metric": "用户级条目数",
+        "target": "减半",
+        "timeframe": "30 天"
+      },
+      {
+        "metric": "误操作恢复成功率",
+        "target": "100%",
+        "timeframe": "持续"
+      },
+      {
+        "metric": "冷启动首版清单",
+        "target": "≤5s",
+        "timeframe": "每次启动"
+      }
+    ],
+    "feature_count": 6,
+    "in_scope_features": [
+      "全盘清单",
+      "CLI 装配+diff 验收",
+      "跨 Agent 挂/卸",
+      "日志+回收站",
+      "挂载账",
+      "MCP 对象"
+    ],
+    "out_of_scope_features": [
+      "调用级追踪",
+      "hooks/rules/memory",
+      "推荐/评分",
+      "云同步/团队",
+      "Win/Linux"
+    ],
+    "critical_assumption": "Agent 经 skillctl 自装配靠谱——未验证；Phase 1 即 dogfooding 验证环，失败退半自动态",
+    "mvp_stories": [
+      "story-1 打开就满",
+      "story-2 一条命令装配⭐",
+      "story-4 回滚底线"
+    ]
+  },
+  "source_skills": {
+    "brief": true,
+    "stories": true,
+    "sitemap": true,
+    "flow_web": true,
+    "flow_mobile": false,
+    "frame": true,
+    "scope": false,
+    "check": true,
+    "edge": true
+  },
+  "thin_sections": []
+}

@@ -1,0 +1,49 @@
+{
+  "skill": "flow-web",
+  "generated_at": "2026-09-19T06:40:00Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "scenario": "SaaS Management（桌面 Sidebar 三段式；macOS 原生 App 的 Web 交互规格稿）",
+  "component_library": "shadcn/ui",
+  "tech_stack": "Vite + React 19 + TS + Tailwind 4 + shadcn(radix/neutral) + react-router + sonner + lucide-react",
+  "project_path": "<home>/…/skill-controller-proto",
+  "flows": [
+    {
+      "name": "Cold Start — 冷启动即满",
+      "related_story": "story-1",
+      "file_path": "src/flows/flow-1/flow1-cold-start.tsx",
+      "screens": [
+        { "id": "S1", "name": "Disk Access Gate（授权 Dialog）", "component": "Dialog" },
+        { "id": "S2", "name": "Inventory（清单：视角Tabs×对象Select×搜索×Table）", "component": "Tabs/Select/Input/Table/Skeleton" },
+        { "id": "S3", "name": "Item Detail（右栏：落点·挂载·时间线·重叠并列·删/恢）", "component": "aside+ScrollArea+AlertDialog" }
+      ]
+    },
+    {
+      "name": "Assembly Review — Agent 自装配验收 ⭐",
+      "related_story": "story-2 / story-3",
+      "file_path": "src/flows/flow-2/flow2-assembly-review.tsx",
+      "screens": [
+        { "id": "S1", "name": "Project View + Assembly Banner（中性色三态）", "component": "Banner+list" },
+        { "id": "S2", "name": "Assembly Diff Sheet（带来/卸下/跳过三组·行内冲突+单条重试）", "component": "Sheet" },
+        { "id": "S3", "name": "Item Detail（复用 F1-S3，浮于 diff 之上）", "component": "复用 Screen3_ItemDetail" },
+        { "id": "S4", "name": "Restore Confirmation", "component": "AlertDialog" }
+      ]
+    }
+  ],
+  "app_shell": {
+    "file_path": "src/flows/skill-controller-app/skill-controller-app.tsx",
+    "routes": ["/", "/inventory", "/flow2", "/ledger", "/rollback", "/settings"],
+    "placeholder_pages": ["/ledger", "/rollback", "/settings"],
+    "shared_files": ["src/flows/shared/types.ts", "src/flows/shared/mock-data.ts"]
+  },
+  "design_decisions_in_code": [
+    "零挂载/未验收态全部中性徽章，无 destructive 色（Brief 零观点约束）",
+    "关闭 diff = 默认接受；恢复原状 = 显式动作（Phase 3 两裁定已落地为代码行为）",
+    "GUI 人类动作封顶：卸下/恢复挂载/删除（删除有 AlertDialog 二次确认）",
+    "冲突失败行内留痕 + 单条重试，不用 toast 一闪而过"
+  ],
+  "verification": {
+    "tsc": "clean",
+    "npm_run_build": "clean（仅 chunk-size warning）",
+    "preview_smoke": "HTTP 200 + #root 存在"
+  }
+}

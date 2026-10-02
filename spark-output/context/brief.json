@@ -1,0 +1,79 @@
+{
+  "skill": "brief",
+  "generated_at": "2026-09-19T04:38:00Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "project_type": "产品设计",
+  "project_subtype": "全新产品",
+  "business_context": "本机散落近 1000 个 Skill，被多个 Agent 无差别全量加载，上下文稀释让 Agent 肉眼可见地变笨；新项目只能全量重装。现有管理工具全是「人当操作员 + 打开是空的」，无一可用。",
+  "business_goal": [
+    "每 Agent 挂载降至最小高信号集 <50",
+    "新项目装配从半天变一条命令",
+    "用户级 Skill 30 天瘦身过半，账本背书",
+    "Agent 变笨可归因、可一键回滚"
+  ],
+  "user": [
+    "设计师本人，重度多 Agent 用户",
+    "本机近千 Skill 跨层级散落",
+    "只看不管，智能外包给 Agent",
+    "对重型面板与空启动零容忍"
+  ],
+  "strategy_dimensions": [
+    {
+      "dimension": "信息架构 IA",
+      "thesis": "清单即产品：两类对象 × 归属三维，不按路径罗列",
+      "tactics": [
+        "Skill（目录）+ MCP（JSON）并列",
+        "Agent × 层级 × 项目聚合",
+        "同名去重合并，零配置即开即满"
+      ],
+      "rationale": "对应机会 #2；竞品败在「打开是空的」"
+    },
+    {
+      "dimension": "交互设计",
+      "thesis": "人只看、只撤销；管理动作全部外包 CLI",
+      "tactics": [
+        "GUI 只读 + 删/恢两个动作封顶",
+        "查/拉/挂/卸 × 两类对象",
+        "操作日志 + 回收站，一步回滚"
+      ],
+      "rationale": "对应「我不要管 Skill」；回滚是底线"
+    },
+    {
+      "dimension": "数据可视化",
+      "thesis": "账本只展示不判断：谁在用什么、用了多少",
+      "tactics": [
+        "按 Agent / 项目聚合频次",
+        "触发词重叠对并列标注",
+        "零评分、零建议、零警告色"
+      ],
+      "rationale": "对应机会 #3；数据由 CLI 装配白捡"
+    }
+  ],
+  "design_criteria": {
+    "quantitative": [
+      "冷启动 ≤5s，清单即开即满",
+      "一次装配 ≤1 条 CLI 命令"
+    ],
+    "qualitative": [
+      "30 秒答出「归谁、在哪、谁挂着」",
+      "任何写删一步撤销，日志可查"
+    ]
+  },
+  "constraints": [
+    "纯本地零云端，无网络请求",
+    "单用户无账号，只为自己设计",
+    "回滚底线：日志 + 回收站，MCP JSON 保格式",
+    "零观点：Agent 自装配假设未验证，不做智能承诺",
+    "Swift / SwiftUI 原生 macOS App"
+  ],
+  "out_of_scope": [
+    "不做推荐 / 评分 / 「该删了」判断",
+    "不做 hooks / 规则 / memory 管理",
+    "不做云同步与团队共享",
+    "不做 Windows / Linux 端",
+    "不做引导流程（onboarding 即设计失败）"
+  ],
+  "style": "script",
+  "ratio": "16-9",
+  "scale": "md"
+}

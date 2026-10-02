@@ -1,0 +1,159 @@
+{
+  "skill": "stories",
+  "generated_at": "2026-09-19T05:42:32Z",
+  "project_name": "本地 Skill 管理工具（Skill 控制器）",
+  "direction": "文件管理器 + Agent 接口（含 MCP 对象，使用账本做暗线）",
+  "persona": {
+    "name": "智昊",
+    "description": "设计师，重度多 Agent 用户（含 Codex 等），本机散落近 1000 个 Skill——即产品唯一用户本人",
+    "jtbd": "当开新项目或日常使用各个 Agent 时，智昊想一眼看到全盘 Skill 清单、并让每个 Agent 按业务场景自动装配对的 Skill 集合，从而让 Agent 保持最小高信号集、自己从维护者降级为观察者。"
+  },
+  "stories": [
+    {
+      "id": "story-1",
+      "title": "打开就满：一眼看清全盘 Skill 归属",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "智昊想搞清楚这台电脑上到底有哪些 Skill、分别被谁挂着",
+      "acceptance_criteria": [
+        "冷启动 ≤5s 呈现首版全盘清单，全程零配置问答",
+        "任一 Skill 能直接答出归属 Agent、用户级/项目级、所属项目",
+        "同名 Skill 多副本合并为一个条目、并列显示各落点",
+        "新机器/无权限等异常有明确的非空态提示"
+      ],
+      "design_touchpoints": [
+        "screen:全盘清单首页",
+        "screen:归属详情抽屉",
+        "component:三级分组树（Agent×层级×项目）",
+        "component:全局搜索",
+        "component:归属徽章",
+        "state:扫描中/满盘/空/权限错误",
+        "pattern:文件管理器式浏览"
+      ],
+      "related_strategy_dimension": "信息架构 IA",
+      "risk": "这是竞品红海区——按能用即可做，别打磨",
+      "priority": "p0",
+      "critical_assumption": false
+    },
+    {
+      "id": "story-2",
+      "title": "新项目一条命令：Agent 自己来拉 Skill",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "智昊开了新项目，需要一套与业务场景匹配的 Skill",
+      "acceptance_criteria": [
+        "Agent 通过一条 CLI 命令即可查询 Skill 全集并按场景拉取落位",
+        "拉取过程无需智昊在场确认",
+        "第二天打开清单，项目层级能看到 Agent 带来了哪些、来源是哪",
+        "拉取失败（冲突/写不进）在清单上有明确痕迹"
+      ],
+      "design_touchpoints": [
+        "screen:项目详情（挂载列表+来源）",
+        "screen:清单 diff 状态",
+        "component:CLI 查询/拉取命令（面向 Agent）",
+        "state:初始/装配成功后/失败",
+        "pattern:agent-tool 接口"
+      ],
+      "related_strategy_dimension": "交互设计",
+      "risk": "本 Story 即命门假设的 dogfooding 场景，假设不成立产品退回手工模式",
+      "priority": "p0",
+      "critical_assumption": true
+    },
+    {
+      "id": "story-3",
+      "title": "Agent 自己挂、自己卸，保住最小集合",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "日常使用中某 Agent 挂载集膨胀，智昊希望它自己收敛",
+      "acceptance_criteria": [
+        "Agent 可经 CLI 对指定目标（自己或别的 Agent）挂载/卸载指定 Skill",
+        "卸载后 Skill 不脱离全集，随时可查可回挂",
+        "每个 Agent 当前生效集合在清单上一屏可见"
+      ],
+      "design_touchpoints": [
+        "screen:Agent 视图（已挂/未挂切换）",
+        "component:CLI 挂/卸命令",
+        "component:挂载状态徽章",
+        "state:切换成功/目录不存在/无权限",
+        "pattern:agent-tool 接口"
+      ],
+      "related_strategy_dimension": "交互设计",
+      "risk": "各 Agent 目录与权限模型不统一是最硬实现坑，PRD 前需逐个侦查",
+      "priority": "p1",
+      "critical_assumption": true
+    },
+    {
+      "id": "story-4",
+      "title": "看错了也能一步撤回：删除与操作日志",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "智昊（或他的 Agent）做错了一次挂载/删除，需要反悔",
+      "acceptance_criteria": [
+        "GUI 动作封顶为删除、恢复两个",
+        "日志按时间/按 Agent 可查每一次读写",
+        "一步撤销后磁盘状态与操作前一致",
+        "回收站保留窗口 ≥30 天"
+      ],
+      "design_touchpoints": [
+        "screen:操作日志流",
+        "screen:回收站",
+        "component:撤销按钮",
+        "component:时间线列表",
+        "state:初始/成功/目标已被二次删除",
+        "pattern:文件版本式回滚"
+      ],
+      "related_strategy_dimension": "交互设计",
+      "risk": "保留窗口宁长勿短，后期删容易补难",
+      "priority": "p1",
+      "critical_assumption": false
+    },
+    {
+      "id": "story-5",
+      "title": "挂载账：谁挂过什么、挂了多久",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "季度末智昊想给用户级 Skill 瘦身，需要文件层的真实挂载数据壮胆",
+      "acceptance_criteria": [
+        "每个 Skill 显示近 90 天挂载变动与被哪些 Agent/项目挂载（纯文件系统观测）",
+        "零挂载条目排在一眼可数的位置（如清单尾部）",
+        "触发词重叠对基于双方 SKILL.md 文案做静态并列，不推断实际调用",
+        "全程不出现「建议删除」、评分或红色警告——只摆数"
+      ],
+      "design_touchpoints": [
+        "screen:挂载账视图（零挂载清单/变动时间线/静态重叠对）",
+        "component:挂载时间线",
+        "component:零挂载清单",
+        "component:重叠对并列卡",
+        "state:数据稀疏/数据充足",
+        "pattern:只读看板"
+      ],
+      "related_strategy_dimension": "数据可视化",
+      "risk": "装载≠调用：低频判断只覆盖挂载维度——用户已明确接受该硬简化（工具拿不到的信息不做）",
+      "priority": "p1",
+      "critical_assumption": false
+    },
+    {
+      "id": "story-6",
+      "title": "MCP 也是清单里的一等公民",
+      "size": "story",
+      "persona": "智昊",
+      "scenario": "智昊要给某个 Agent 增删 MCP server，但不想碰 JSON",
+      "acceptance_criteria": [
+        "清单以两类对象并列展示 Skill 与 MCP，归属三维一致",
+        "MCP 增删全走工具/CLI，智昊不手编 JSON",
+        "写回前保持该 Agent 原生 JSON 格式并自动备份"
+      ],
+      "design_touchpoints": [
+        "screen:清单对象类型筛选",
+        "component:JSON 条目卡",
+        "component:CLI 挂/卸命令（MCP 变体）",
+        "state:写入成功/格式解析失败",
+        "pattern:agent-tool 接口"
+      ],
+      "related_strategy_dimension": "信息架构 IA",
+      "risk": "可放 P2，但统一数据模型必须 v1 就定，否则是二次重构",
+      "priority": "p2",
+      "critical_assumption": false
+    }
+  ]
+}

@@ -4,9 +4,9 @@
 // 判定逻辑住在 Sources/ 的理由：App 侧视图不在 `swift test` 覆盖内（D27 确立的既有事实），
 // A1/A2/A5 要进单元测试就必须让纯函数面住在 Core（K1/K2）。
 //
-// 进程调用边界（App 进程第一处 Process 调用，设计档 §2.1）：
-// 只 spawn `skillctl --version` 一个命令、只捕获输出、不写盘、零网络、3s 超时不重试、
-// 后台执行、单飞不叠加、不落操作日志（探测不是写操作，回退页不收探测噪音）。
+// 探测边界（设计档 §2.1）：只 spawn `skillctl --version`，并对 GitHub 公共 Releases API 发一条
+// 无认证 GET 读取最新稳定版元数据；不下载、不写盘、不发送设备标识或遥测。两项均限时、只读，
+// 后台执行、单飞不叠加、不落操作日志。
 
 import Foundation
 
@@ -45,14 +45,16 @@ public struct SkillctlProbe: Sendable {
             #if DEBUG
             // 真机注入缝（设计档 §2.1 评审发现③落档的映射表）：`SKILLCTL_FAKE_PROBE` 注入的是
             // 缺口态名而非 ProbeOutcome 词汇；环境变量非空时候选序解析 / spawn / 超时整体不执行。
-            // Release 不含此分支。outdated / ahead 为固定字面量（与 A2 单测同值）；
-            // App 版本将来若 ≥ 2.0.0，ahead 注入值需同步调整。
+            // Release 不含此分支。outdated / ahead 为固定字面量；current 可与
+            // SKILLCTL_FAKE_LATEST_RELEASE 配对，得到独立于 App 版本的一致态。
             if let raw = ProcessInfo.processInfo.environment["SKILLCTL_FAKE_PROBE"], !raw.isEmpty {
                 switch raw {
                 case "notInstalled": return .notFound
                 case "outdated": return .version("0.9.0")
                 case "ahead": return .version("2.0.0")
-                case "current": return .version(SkillControllerVersion.string)
+                case "current":
+                    let fakeLatest = ProcessInfo.processInfo.environment["SKILLCTL_FAKE_LATEST_RELEASE"]
+                    return .version(fakeLatest.flatMap { Self.parseVersionLine($0) } ?? SkillControllerVersion.string)
                 case "failed": return .failed(note: "probe-failed")
                 default: break   // 未知取值不注入，按真探测走——不把打错的值伪装成检测态
                 }
@@ -143,29 +145,143 @@ public struct SkillctlProbe: Sendable {
     }
 }
 
+// MARK: - 最新 CLI release 检查（只读联网例外）
+
+/// 查询 GitHub 最新稳定 release 的版本号。App 每次启动独立检查一次；进程内短期复检由
+/// CLIGuideModel 缓存，避免前台切换 / Sheet 展示造成重复请求。
+public struct SkillctlLatestReleaseProbe: Sendable {
+    public enum Outcome: Equatable, Sendable {
+        case latest(String)
+        case failed(note: String)
+    }
+
+    public static let timeout: TimeInterval = 5
+    public static let endpoint = URL(string: "https://api.github.com/repos/cnzhihao/skill-controller/releases/latest")!
+
+    public init() {}
+
+    public func probe() async -> Outcome {
+        #if DEBUG
+        if let fake = ProcessInfo.processInfo.environment["SKILLCTL_FAKE_LATEST_RELEASE"], !fake.isEmpty {
+            if fake == "failed" { return .failed(note: "release-check-failed") }
+            if Self.isVersion(fake) { return .latest(fake) }
+        }
+        #endif
+
+        var request = URLRequest(url: Self.endpoint,
+                                 cachePolicy: .reloadIgnoringLocalCacheData,
+                                 timeoutInterval: Self.timeout)
+        request.httpMethod = "GET"
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+        request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
+        request.setValue("SkillController", forHTTPHeaderField: "User-Agent")
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = Self.timeout
+        configuration.timeoutIntervalForResource = Self.timeout
+        configuration.urlCache = nil
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel() }
+
+        do {
+            let (data, response) = try await session.data(for: request)
+            guard let response = response as? HTTPURLResponse else {
+                return .failed(note: "GitHub 返回了无法识别的响应")
+            }
+            guard response.statusCode == 200 else {
+                return .failed(note: "GitHub 返回 HTTP \(response.statusCode)")
+            }
+            guard let release = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let tag = release["tag_name"] as? String,
+                  let assets = release["assets"] as? [[String: Any]] else {
+                return .failed(note: "GitHub release 元数据格式无法识别")
+            }
+
+            let version = tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
+            guard Self.isVersion(version) else {
+                return .failed(note: "GitHub release 标签不是有效版本号")
+            }
+            let expectedAsset = "skillctl-v\(version)-arm64-macos"
+            guard assets.contains(where: { ($0["name"] as? String) == expectedAsset }) else {
+                return .failed(note: "GitHub release 缺少 \(expectedAsset) 二进制")
+            }
+            return .latest(version)
+        } catch {
+            return .failed(note: "GitHub release 检查失败（\(error.localizedDescription)）")
+        }
+    }
+
+    private static func isVersion(_ value: String) -> Bool {
+        let pieces = value.split(separator: ".", omittingEmptySubsequences: false)
+        return (2...3).contains(pieces.count)
+            && pieces.allSatisfy { !$0.isEmpty && $0.allSatisfy(\.isNumber) }
+    }
+}
+
 // MARK: - 检测态与判定（设计档 §2.1）
 
 /// 四态（需求档 F1 表逐行对应；走查裁定选 A 增 ahead 态）。
 public enum CLIStatus: Equatable, Sendable {
     case notInstalled(note: String?)   // note ≠ nil = 探测失败注脚，如实显示、按未检测到分类（裁决④）
-    case outdated(installed: String)   // installed < App：标题 C6「skillctl 升级到 {V}」
-    case ahead(installed: String)      // installed > App：标题 C13 中性（裁决⑤选 A）；行为与 outdated 一致
+    case outdated(installed: String)   // installed < GitHub 最新稳定 release
+    case ahead(installed: String)      // installed > GitHub 最新稳定 release；不提供降级安装引导
     case current
+    case latestUnavailable(installed: String?, note: String) // 无法查询远端版本，不猜目标版本、不弹安装提示
 
-    /// 缺口级别键：跳过持久化与自动呈现判定共用。
-    /// ahead 与 outdated 同属「版本不对齐」级（复用 "outdated"，K10）——方向翻转不构成级别变化，不重弹。
+    /// 是否有可执行的 CLI 安装/升级动作。远端版本查询失败时不猜目标版本，
+    /// 已装版本高于最新稳定版时也不生成覆盖安装指令。
+    public var canOfferSetupGuide: Bool {
+        switch self {
+        case .notInstalled, .outdated: return true
+        case .ahead, .current, .latestUnavailable: return false
+        }
+    }
+
+    /// 跳过持久化使用的缺口级别键。
+    /// ahead 与 outdated 仍共用 "outdated" 跳过键；但 ahead 不提供安装/升级引导，
+    /// 仅保留版本差异状态，避免将较新的 CLI 覆盖为较旧版本。
     public var gapKey: String? {
         switch self {
         case .notInstalled: return "notInstalled"
         case .outdated, .ahead: return "outdated"
-        case .current: return nil
+        case .current, .latestUnavailable: return nil
         }
     }
 }
 
 public enum CLIGuideDecision {
-    /// 纯函数四态判定（需求档 F1 表逐行对应）。installed 与 appVersion 按 X.Y.Z 逐段数值
-    /// 比较（major→minor→patch，缺段补 0）：< 为 outdated、> 为 ahead、= 为 current
+    /// 启动判定：本机 CLI 与 GitHub 最新稳定 release 比较；App 自身版本不参与 CLI 更新判断。
+    public static func decide(_ probe: SkillctlProbe.ProbeOutcome,
+                              latestRelease: SkillctlLatestReleaseProbe.Outcome) -> CLIStatus {
+        switch latestRelease {
+        case .failed(let note):
+            let installed: String?
+            if case .version(let version) = probe { installed = version }
+            else { installed = nil }
+            return .latestUnavailable(installed: installed, note: note)
+        case .latest(let latest):
+            return decide(probe, latestVersion: latest)
+        }
+    }
+
+    /// 本机 CLI 与远端 release 比较。版本按 X.Y.Z 逐段数值比较（major→minor→patch，缺段补 0）。
+    public static func decide(_ probe: SkillctlProbe.ProbeOutcome, latestVersion: String) -> CLIStatus {
+        switch probe {
+        case .notFound:
+            return .notInstalled(note: nil)
+        case .failed(let note):
+            return .notInstalled(note: note)
+        case .version(let installed):
+            switch compare(installed, latestVersion) {
+            case .orderedAscending: return .outdated(installed: installed)
+            case .orderedDescending: return .ahead(installed: installed)
+            case .orderedSame: return .current
+            }
+        }
+    }
+
+    /// 兼容旧需求档单测的 App 版本比较入口；App 启动流程不再调用。
+    @available(*, deprecated, message: "Use latestVersion:; App version is not a CLI update target.")
     public static func decide(_ probe: SkillctlProbe.ProbeOutcome, appVersion: String) -> CLIStatus {
         switch probe {
         case .notFound:
@@ -182,8 +298,9 @@ public enum CLIGuideDecision {
         }
     }
 
-    /// 纯函数自动呈现判定：current → false；缺口级别已被跳过 → false；其余 true
+    /// 自动呈现只针对可执行的安装动作：未安装 / 落后可引导，超前 / 一致不引导。
     public static func shouldAutoPresent(status: CLIStatus, skippedLevel: String?) -> Bool {
+        guard status.canOfferSetupGuide else { return false }
         guard let gap = status.gapKey else { return false }
         return gap != skippedLevel
     }
@@ -208,11 +325,11 @@ public enum CLIGuideDecision {
 // MARK: - 提示词常量（设计档 §2.4；K2：文本本体住 Core，A1/A2 单测咬结构）
 
 public enum SetupGuidePrompt {
-    /// 提示词全文，一套共用（设计定案）：安装 / 升级差异由第 1 步「先探测现状」内部消化——
-    /// 对 Agent 而言都是「装到 PATH」，覆盖即升级。`{V}` = App 版本（版本单源插值，K6）。
+    /// 提示词全文，一套共用（安装 / 落后态）：第 1 步先探测现状，目标版本或更高版本时停止，防止降级。
+    /// `{V}` = GitHub 最新稳定 release 版本；App 当前版本不参与 CLI 版本目标判定。
     private static let template = """
     请帮我安装（或升级）skillctl——Skill 控制器 的命令行工具。先探测现状再动手：
-    1. 运行 `skillctl --version`。若输出已经是 {V}，告诉我「已是 {V}」即可停止，不要重复安装；否则继续。
+    1. 运行 `skillctl --version`。若输出已经是 {V} 或更高版本，告诉我「已是 {V} 或更新版本」即可停止，不要降级或重复安装；若低于 {V} 或未找到命令，再继续。
     2. 下载对应版本的 release 二进制（arm64 / macOS）：
        https://github.com/cnzhihao/skill-controller/releases/download/v{V}/skillctl-v{V}-arm64-macos
     3. 校验完整性：打开 https://github.com/cnzhihao/skill-controller/releases/tag/v{V} ，取官方公布的
@@ -224,12 +341,32 @@ public enum SetupGuidePrompt {
     6. 自验：重新运行 `skillctl --version`，把输出发给我；应为 {V}。
     """
 
-    public static func text(appVersion: String) -> String {
-        template.replacingOccurrences(of: "{V}", with: appVersion)
+    public static func text(targetVersion: String) -> String {
+        template.replacingOccurrences(of: "{V}", with: targetVersion)
+    }
+
+    /// 旧调用名的兼容别名；调用参数现在表示目标 CLI 版本，不是 App 版本。
+    @available(*, deprecated, message: "Use text(targetVersion:); CLI update targets come from GitHub releases.")
+    public static func text(appVersion: String) -> String { text(targetVersion: appVersion) }
+
+    public static func title(for status: CLIStatus, latestVersion: String) -> String {
+        switch status {
+        case .notInstalled:
+            return "安装 skillctl"
+        case .outdated:
+            return "skillctl 升级到 \(latestVersion)"
+        case .ahead(let installed):
+            return "skillctl \(installed) 高于 GitHub 最新发布版 \(latestVersion)"
+        case .current:
+            return "skillctl 已是最新（\(latestVersion)）"
+        case .latestUnavailable:
+            return "无法检查 skillctl 最新版本"
+        }
     }
 
     /// 弹窗标题分派（设计档 §8）：.notInstalled → C5、.outdated → C6、.ahead → C13。
     /// 超前态不走 C6——「升级到 {V}」会把新版说旧（裁决⑤选 A，2026-09-28）。
+    @available(*, deprecated, message: "Use latestVersion:; App version is not a CLI update target.")
     public static func title(for status: CLIStatus, appVersion: String) -> String {
         switch status {
         case .notInstalled:
@@ -239,7 +376,9 @@ public enum SetupGuidePrompt {
         case .ahead(let installed):
             return "skillctl \(installed) 与 App（\(appVersion)）不一致"      // C13（超前中性）
         case .current:
-            return ""   // K9：current 不进任何弹窗逻辑（Sheet 无 current 变体），此分支不应被调用
+            return ""   // current 不会新开 Sheet；已有 Sheet 翻成一致态时仅显示 C3 状态说明
+        case .latestUnavailable:
+            return "无法检查 skillctl 最新版本"
         }
     }
 }

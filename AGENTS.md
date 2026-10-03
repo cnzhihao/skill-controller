@@ -12,7 +12,7 @@
 3. **文案照抄 PRD/Edge 的 copy_hint**（含"只报总量不报风险"的降级横幅句式、"谁留谁走，你或你的 Agent 决定"），要改先提出讨论。
 4. **视觉只从 tokens 取**：无自创色值/字号/圆角；等宽全局；数字 `.monospacedDigit()`；每屏 primary ≤1。
 5. **数据面不限宽**（跟窗口走，min-width 960）；阅读型容器限宽（详情 360/Sheet 520/对话框 max-w）。
-6. **App 进程零网络请求、零遥测**；不读 Agent 会话日志（调用层永久排除）。唯一联网例外：`skillctl add` 的 git clone（仅 HTTPS git 协议，无遥测、无其他端点）。
+6. **App 进程零遥测**；不读 Agent 会话日志（调用层永久排除）。联网仅限两处：`skillctl add` 的 HTTPS git clone；CLI 安装引导每次冷启动只读一次 GitHub 最新稳定 Release 元数据（公开 API、无认证、5 秒超时、不下载、不含设备标识）。
 7. 可点击行必须键盘可达（focus ring + Enter/Space）；禁用态 opacity+cursor 双标识。
 8. 所有写操作三步齐：操作日志 + 回收站/备份 + 可一步恢复；恢复失败如实报部分态（G4），恢复按钮不撒谎（G7）。
 

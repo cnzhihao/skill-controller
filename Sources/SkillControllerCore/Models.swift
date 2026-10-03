@@ -34,8 +34,12 @@ public enum ObjectType: String, Codable, Sendable {
 /// level/projectId 一并取库落点值（此前仍取分组首条，库条目被 mount 过即被误判成
 /// project/user 级，「技能库」筛选恒空、CLI list/info 的 level 字段失真）。
 /// CLI JSON 输出值变化，按上面的纪律同一次提交 bump 并重装。
+/// **1.1.2（2026-10-03）**：临时区剪枝（台账 #28）——systemDirs 名单补 `T`（darwin POSIX TMPDIR
+/// 的 /var/folders/**/T/），swift test 的 mkdtemp 夹具不再被全盘发现收进全集（此前在册 65 条）。
+/// 扫描范围变化，App 与 skillctl 共用同一发现链 → `skillctl list` 输出集合变小，
+/// 按上面的纪律同一次提交 bump 并重装。
 public enum SkillControllerVersion {
-    public static let string = "1.1.1"
+    public static let string = "1.1.2"
 }
 
 public enum Level: String, Codable, Sendable {

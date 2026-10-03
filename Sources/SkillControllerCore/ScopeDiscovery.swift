@@ -70,7 +70,17 @@ public enum PruneCategory: String, CaseIterable, Codable, Sendable, Hashable {
         case .dependency: return ["node_modules"]
         case .vcs: return [".git", ".svn", ".hg", ".bzr"]
         case .systemDirs: return ["Library", "DerivedData", ".vol", ".fseventsd",
-                                  ".Spotlight-V100", ".DocumentRevisions-V100"]
+                                  ".Spotlight-V100", ".DocumentRevisions-V100",
+                                  // darwin 系统临时区（2026-10-03 台账 #10/#28）：POSIX TMPDIR 指向的
+                                  // /var/folders/**/T/（/var→private/var 的 symlink，但 emitted 路径
+                                  // standardized 后统一是 /var 形态——名字匹配对双形态天然一致，无需
+                                  // canonical 化）。swift test 的 mkdtemp 夹具整棵住在 T 子树里，
+                                  // 2026-10-03 查证：在册 65 条全是夹具。补前缀方案（/var/folders 进
+                                  // pathPrefixes）被否：全仓测试 fixture 都建在 T 直下，子项判据会把
+                                  // 它们整个剪掉。误伤面 2026-10-03 实测为 0（缓存 1,129 条在册位置
+                                  // 含 T 组件的 102 处全在 /var/folders 下；真有用户目录名叫 T 的情形，
+                                  // 设置页关掉 systemDirs 类即可豁免）
+                                  "T"]
         case .cache: return [".cache", "Caches"]
         case .copy: return [".Trash", "Trash", "trash", ".trash", "backup", "backups", ".backup"]
         case .appBundle: return []

@@ -34,6 +34,9 @@ struct ScopeDiscoveryTests {
         try touch("plain/skills/plain-one")
         // 无 .git 也非 home 直属 → 其他位置
         try touch("workspace/nested-kit/skills/loose")
+        // macOS 系统临时区形状（2026-10-03 台账 #10/#28）：全盘发现自 / 下行时 T 是某层的
+        // 遍历子项，swift test 的 mkdtemp 夹具整个住在 T 子树里——新名单必须在 T 层截断
+        try touch("T/pruned-T-fixture/home/.agents/skills/alpha")
         // 该被剪掉的噪音
         try touch("proj/node_modules/left-pad/skills/noise")
         try touch("Library/Deep/foo/skills/noise")
@@ -74,10 +77,12 @@ struct ScopeDiscoveryTests {
             home.appendingPathComponent("workspace/nested-kit/skills").path,
         ]
         #expect(found == expected, "发现结果不符：多了 \(found.subtracting(expected))，少了 \(expected.subtracting(found))")
-        // 噪音目录一个都不能进来
+        // 噪音目录一个都不能进来（T 夹具用注入段名判定：本套夹具 root 就住在系统临时区
+        // /var/folders/**/T/ 下，每条发现路径天然含 "/T/"，不能用裸子串）
         #expect(!found.contains { $0.contains("node_modules") || $0.contains("Library/Deep")
             || $0.contains(".app/") || $0.contains("marketplace-cache")
-            || $0.contains("/builtin/") || $0.contains("/.cache/") })
+            || $0.contains("/builtin/") || $0.contains("/.cache/")
+            || $0.contains("T/pruned-T-fixture") }, "系统临时区 T 子树里的 skills 不该被发现（2026-10-03 临时区剪枝）")
     }
 
     @Test func discoveryFindsMCPFilesWithDepthGate() throws {
@@ -265,6 +270,15 @@ struct ScopeDiscoveryTests {
         #expect(rules.category(forName: "trash") == .copy)
         #expect(rules.category(forName: "Trash") == .copy)
         #expect(rules.category(forName: "backup") == .copy)
+        // macOS 系统临时区（2026-10-03 台账 #10/#28）：swift test 的 mkdtemp 夹具住在
+        // /var/folders/**/T/ 子树里，全盘发现曾把 65 条夹具当挂载位收进全集——
+        // 名单补 `T` 在临时区层截断。放 systemDirs 而非 temp 类的理由：temp 类的既有
+        // 名单是 .tmp/.temp（工具自建临时目录），系统临时区是系统目录，且目录名 T 是
+        // darwin 的约定（POSIX TMPDIR），不是某家工具的私产。
+        #expect(rules.category(forName: "T") == .systemDirs)
+        // 误伤反例守护：非临时区的普通目录不因同名前缀被顺手剪掉
+        #expect(rules.category(forName: "Tests") == nil)
+        #expect(rules.category(forName: "tmp") == nil)
         // 反过来：可能真写了 skill 的位置不能被顺手剪掉
         #expect(rules.category(forName: "vendor") == nil)
         #expect(rules.category(forName: "tests") == nil)
@@ -320,7 +334,8 @@ struct ScopeDiscoveryTests {
         let index = rules.pruneIndex(home: home)
         let names = ["node_modules", ".git", "Library", "builtin", ".cache", "Caches", "trash",
                      "Trash", "backup", "DerivedData", "Foo.app", "x.framework", "marketplace-cache",
-                     "vendor", "tests", "fixtures", "skills", "src"]
+                     "vendor", "tests", "fixtures", "skills", "src",
+                     "T", "Tests", "tmp"]   // 2026-10-03 临时区剪枝：T 进名单、Tests/tmp 是误伤反例
         for n in names {
             #expect(index.category(name: n, path: home + "/" + n) == rules.category(forName: n),
                     "索引与计算属性在 \(n) 上不一致")

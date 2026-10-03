@@ -280,7 +280,8 @@ struct SettingsView: View {
 // MARK: - 设置页 CLI 单行区（台账 #19 · 设计档 §8）
 //
 // 检测态四态文案 C2（未检测到）/ C3（已装一致）/ C4（版本不对齐，落后/超前共用）+ 入口按钮 C1。
-// current 态入口按钮**隐藏**而非置灰（评审发现①落档）：current 无缺口可修，按钮保留只有两条去路——
+// current / ahead / 最新版本检查失败时入口按钮隐藏：均没有可执行的 CLI 安装动作，不能展示空操作或降级指令。
+// current 态原裁决的理由仍适用：按钮保留只有两条去路——
 // 点了呈现未经人工复核的新中性文案（撞「新文案逐一过目」红线），或做成点了无内容可呈现的撒谎按钮
 // （撞 K8 出口收口与「按钮不撒谎」纪律）；C3 文案本身已是完整状态说明，隐藏零信息损失。
 // 入口无视时机与跳过（设计裁定）：常驻，随时可点，点开先复检再呈现（§2.3）。
@@ -297,10 +298,10 @@ struct CliGuideSettingsRow: View {
                 .font(.system(size: 12))
                 .foregroundStyle(Color.scMutedForeground)
             Spacer(minLength: 4)
-            // C1（用户裁决定名「CLI 安装 / 升级」）：缺口态才显按钮（current 态隐藏，评审发现①）；
+            // C1（用户裁决定名「CLI 安装 / 升级」）：可执行安装动作才显按钮（current / ahead 隐藏）；
             // 探测未落地（status == nil）时同样不显——探测是毫秒级只读操作，等态落地再给可点出口，
             // 不做点开「还没有内容可呈现」的撒谎按钮（G7/K8）。
-            if guide.status?.gapKey != nil {
+            if guide.canOfferSetupGuide {
                 Button {
                     guide.openManually()
                     showGuide = true
@@ -331,11 +332,12 @@ struct CliGuideSettingsRow: View {
             // C2 + 如实注脚（探测失败原因——裁决④不静默吞；句式取 C9 同一措辞骨架）
             Text("未检测到 skillctl" + (note.map { "（探测未能完成：\($0)）" } ?? ""))
         case .outdated(let installed), .ahead(let installed):
-            // C4：句式并列报两个版本号、方向中性，落后与超前原样共用（F3 四态齐，无新增条目）
-            Text("已装 skillctl \(installed)，App 为 \(SkillControllerVersion.string)")
+            Text("已装 skillctl \(installed)，GitHub 最新发布版 \(guide.latestVersion ?? "检查中")")
         case .current:
-            // C3：已装且版本一致。此时入口按钮已隐藏，本行只剩这句完整状态说明
-            Text("已装 skillctl \(SkillControllerVersion.string)（与 App 一致）")
+            Text("已装 skillctl \(guide.latestVersion ?? "未知")（与 GitHub 最新发布版一致）")
+        case .latestUnavailable(let installed, let note):
+            let prefix = installed.map { "已装 skillctl \($0)；" } ?? "未检测到 skillctl；"
+            Text(prefix + "无法检查 GitHub 最新版本（\(note)）")
         }
     }
 }

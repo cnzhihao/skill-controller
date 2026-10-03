@@ -1,14 +1,15 @@
 // CLIGuide.swift — CLI 检测编排与引导 Sheet（App 层；Core 面在 SetupGuide.swift）
 //
 // 编排（§2.3 数据流）：冷启动 + 每次前台活跃 + Sheet onAppear 三个触发点复检；
-// 探测后台执行（同步 waitUntilExit 会阻塞主线程）、同一时刻最多一个在跑（单飞不叠加）；
-// 自动呈现 = 缺口 ∧ 该级别未跳过 ∧ 授权门已收口（gate != .ask）。
+// PATH 探测与 GitHub release 检查均后台执行，同一时刻最多一个在跑（单飞不叠加）；
+// 自动呈现 = 有可执行安装动作 ∧ 该级别未跳过 ∧ 授权门已收口（gate != .ask）。
 //
 // 出口只有两个，语义单一（K8，不重蹈 D28 的无标逃生缝）：
 //   「复制提示词」→ NSPasteboard，按钮转「已复制」，不关 Sheet
 //   「先不装」──→ 持久化当前缺口级别 + 关 Sheet；Esc（.cancelAction）接到同一按钮
 //
-// 红线：零网络零遥测（探测只读 PATH 与 exec）、探测不落操作日志（回退页不收探测噪音）。
+// 联网边界：只 GET GitHub 公共 Releases API 元数据，不下载、不带用户标识、不遥测；
+// CLI 检测与 release 检查都不落操作日志（回退页不收探测噪音）。
 
 import SwiftUI
 import SkillControllerCore
@@ -19,6 +20,8 @@ import SkillControllerCore
 final class CLIGuideModel: ObservableObject {
     /// 当前检测态（nil = 尚未探完；冷启动即后台探测，不阻塞首屏）
     @Published private(set) var status: CLIStatus?
+    /// GitHub 最新稳定 release 版本；提示词目标只读此值，不读 App 版本。
+    @Published private(set) var latestVersion: String?
     /// 探测在跑（设置页入口行据如实显示"正在检测"）
     @Published private(set) var probing = false
     /// 复制按钮态翻转（DetailPanel.swift:315-319 先例）
@@ -26,12 +29,16 @@ final class CLIGuideModel: ObservableObject {
 
     /// 共享探测器实例；App 侧默认 `.system`。测试/真机注入经构造参数或注入缝。
     let probe: SkillctlProbe
+    private let latestReleaseProbe = SkillctlLatestReleaseProbe()
 
     /// 跳过记录读写走 AppSettings（settings.json 单源）；App 注入 paths，测试注入隔离目录。
     private let paths: SkillControllerPaths
     /// 单飞守卫：同一时刻最多一个探测在跑，后来的触发复用在跑结果，不叠加（设计档 §2.1）。
     private var inFlight = false
     private var copiedResetTask: Task<Void, Never>?
+    private var cachedReleaseOutcome: SkillctlLatestReleaseProbe.Outcome?
+    private var cachedReleaseCheckedAt: Date?
+    private let releaseCacheWindow: TimeInterval = 10 * 60
 
     init(probe: SkillctlProbe = SkillctlProbe(.system),
          paths: SkillControllerPaths = SkillControllerPaths()) {
@@ -57,7 +64,12 @@ final class CLIGuideModel: ObservableObject {
         AppSettings.load(paths: paths).cliGuideSkippedLevel
     }
 
-    /// 自动呈现条件的 App 侧包装（§2.3）：缺口 ∧ 该级别未跳过 ∧ 本会话未按「先不装」收掉。
+    /// 只有远端版本确认成功，才开放可执行的安装/升级提示词。
+    var canOfferSetupGuide: Bool {
+        latestVersion != nil && status?.canOfferSetupGuide == true
+    }
+
+    /// 自动呈现条件的 App 侧包装（§2.3）：有可执行安装动作 ∧ 该级别未跳过 ∧ 本会话未按「先不装」收掉。
     /// 授权门条件（gate != .ask）由 RootView 的 sheet binding 叠加——gate 在 AppState 上。
     var wantsAutoPresent: Bool {
         guard !autoPresentDismissed else { return false }
@@ -66,26 +78,67 @@ final class CLIGuideModel: ObservableObject {
     }
 
     /// 复检入口（冷启动 / 前台活跃 / Sheet onAppear 三个触发点共用）。后台探测，结果回主线程发布。
-    func recheck() {
+    func recheck(forceLatest: Bool = false) {
         guard !inFlight else { return }   // 单飞：在跑就直接复用它的结果
         inFlight = true
         probing = true
-        Task.detached(priority: .utility) { [probe] in
+        let recentRelease: SkillctlLatestReleaseProbe.Outcome?
+        let recentReleaseAt: Date?
+        if !forceLatest,
+           let cachedReleaseOutcome,
+           let cachedReleaseCheckedAt,
+           Date().timeIntervalSince(cachedReleaseCheckedAt) < releaseCacheWindow {
+            recentRelease = cachedReleaseOutcome
+            recentReleaseAt = cachedReleaseCheckedAt
+        } else {
+            recentRelease = nil
+            recentReleaseAt = nil
+        }
+        if recentRelease == nil { latestVersion = nil }
+        let releaseProbe = latestReleaseProbe
+        Task.detached(priority: .utility) { [probe, recentRelease, recentReleaseAt, releaseProbe] in
+            let releaseTask: Task<SkillctlLatestReleaseProbe.Outcome, Never>?
+            if recentRelease == nil {
+                releaseTask = Task.detached(priority: .utility) { await releaseProbe.probe() }
+            } else {
+                releaseTask = nil
+            }
             let outcome = probe.probe()
+            let releaseOutcome: SkillctlLatestReleaseProbe.Outcome
+            let releaseCheckedAt: Date
+            if let recentRelease, let recentReleaseAt {
+                releaseOutcome = recentRelease
+                releaseCheckedAt = recentReleaseAt
+            }
+            else if let releaseTask {
+                releaseOutcome = await releaseTask.value
+                releaseCheckedAt = Date()
+            }
+            else {
+                releaseOutcome = .failed(note: "GitHub release 检查未运行")
+                releaseCheckedAt = Date()
+            }
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.inFlight = false
                 self.probing = false
-                self.apply(outcome)
+                self.apply(outcome, latestRelease: releaseOutcome, checkedAt: releaseCheckedAt)
             }
         }
     }
 
-    /// 探测结果落地：发布 status；翻成 current 时清掉跳过记录（§2.2——该记录已死，清掉保持状态最小）。
-    private func apply(_ outcome: SkillctlProbe.ProbeOutcome) {
-        let newStatus = CLIGuideDecision.decide(outcome, appVersion: SkillControllerVersion.string)
+    /// 探测结果落地：App 版本不参与 CLI 最新版判定。
+    private func apply(_ outcome: SkillctlProbe.ProbeOutcome,
+                       latestRelease: SkillctlLatestReleaseProbe.Outcome,
+                       checkedAt: Date) {
+        cachedReleaseOutcome = latestRelease
+        cachedReleaseCheckedAt = checkedAt
+        if case .latest(let version) = latestRelease { latestVersion = version }
+        else { latestVersion = nil }
+
+        let newStatus = CLIGuideDecision.decide(outcome, latestRelease: latestRelease)
         status = newStatus
-        if newStatus == .current, skippedLevel != nil {
+        if (newStatus == .current || isAhead(newStatus)), skippedLevel != nil {
             clearSkip()
         }
         // 新缺口级别到来时复位「先不装」的会话内收掉位：级别变了要重新弹（K5——
@@ -96,6 +149,11 @@ final class CLIGuideModel: ObservableObject {
         lastPresentedGapKey = newStatus.gapKey
     }
     private var lastPresentedGapKey: String?
+
+    private func isAhead(_ status: CLIStatus) -> Bool {
+        if case .ahead = status { return true }
+        return false
+    }
 
     /// 「先不装」：持久化当前缺口级别 + 关 Sheet（关闭动作在视图层）。写失败不阻断——
     /// 本次仍关闭，下次启动会再弹，如实行为、不假装已记住（§2.2）。
@@ -115,8 +173,9 @@ final class CLIGuideModel: ObservableObject {
 
     /// 「复制提示词」→ NSPasteboard，不关 Sheet（§2.3 出口语义）
     func copyPrompt() {
+        guard canOfferSetupGuide, let latestVersion else { return }
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(SetupGuidePrompt.text(appVersion: SkillControllerVersion.string),
+        NSPasteboard.general.setString(SetupGuidePrompt.text(targetVersion: latestVersion),
                                        forType: .string)
         copied = true
         copiedResetTask?.cancel()
@@ -128,7 +187,7 @@ final class CLIGuideModel: ObservableObject {
 
     /// 手动入口（设置页「CLI 安装 / 升级」）开 Sheet 前先刷新一次：先复检再呈现（§2.3 Sheet onAppear 触发点）。
     func openManually() {
-        recheck()
+        recheck(forceLatest: true)
     }
 
     /// 自动呈现的关闭路径：只在「先不装」（含 Esc 映射到同一按钮）时被 RootView 的 binding set 触达。
@@ -163,8 +222,10 @@ struct CliGuideSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
-            Divider().overlay(Color.scBorder)
-            content
+            if guide.canOfferSetupGuide {
+                Divider().overlay(Color.scBorder)
+                content
+            }
             Divider().overlay(Color.scBorder)
             footer
         }
@@ -177,11 +238,11 @@ struct CliGuideSheet: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // 标题分派 C5 / C6 / C13（SetupGuidePrompt.title）；Sheet 无 current 变体（§2.3）——
-            // status 探完翻 current 时这一屏维持既有内容，用户关闭后不再弹（K9）。
+            // 标题分派 C5 / C6 / C13（SetupGuidePrompt.title）；current 不会自动开 Sheet。
+            // 已打开时若复检翻成 current，状态说明保留，提示词正文与复制出口隐藏。
             Text(title)
                 .font(.system(size: 16, weight: .semibold))
-            Text(explanation)   // C7（安装态）/ C8（版本不对齐，落后超前共用）
+            Text(explanation)   // C7（安装态）/ C8（版本落后）/ C4（复检翻成超前态）
                 .font(.system(size: 14))
                 .foregroundStyle(Color.scForeground)
                 .fixedSize(horizontal: false, vertical: true)
@@ -192,7 +253,7 @@ struct CliGuideSheet: View {
     private var content: some View {
         ScrollView {
             // C12：提示词正文（唯一常量）。只读可滚动、等宽全局由 App 根视图施加。
-            Text(SetupGuidePrompt.text(appVersion: SkillControllerVersion.string))
+            Text(SetupGuidePrompt.text(targetVersion: guide.latestVersion ?? ""))
                 .font(.system(size: 12))
                 .foregroundStyle(Color.scForeground)
                 .textSelection(.enabled)
@@ -221,12 +282,14 @@ struct CliGuideSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             HStack {
-                Button {
-                    guide.copyPrompt()   // 复制不关 Sheet（K8 出口语义）
-                } label: {
-                    Label(guide.copied ? "已复制" : "复制提示词", systemImage: "doc.on.doc")   // C10
+                if guide.canOfferSetupGuide {
+                    Button {
+                        guide.copyPrompt()   // 复制不关 Sheet（K8 出口语义）
+                    } label: {
+                        Label(guide.copied ? "已复制" : "复制提示词", systemImage: "doc.on.doc")   // C10
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
                 Spacer()
                 // C11：中性色非 destructive；Esc（.cancelAction）接到同一按钮（§2.3）
                 Button {
@@ -246,21 +309,23 @@ struct CliGuideSheet: View {
     /// 标题：status 未探完时先给 C5（Sheet 只在缺口态被打开，安装态占位探完即被 decide 修正）
     private var title: String {
         SetupGuidePrompt.title(for: guide.status ?? .notInstalled(note: nil),
-                               appVersion: SkillControllerVersion.string)
+                               latestVersion: guide.latestVersion ?? "…")
     }
 
-    /// 说明文案：C7 / C8 的槽位插值——两句话的骨架与措辞逐字取自设计档 §8 文案表。
+    /// 说明文案：C7 / C8 / C4 逐字取自设计档 §8 文案表。
     /// status 未探完时先按安装态呈 C7（Sheet 只在缺口态被打开，探完即被 decide 修正）。
     private var explanation: String {
-        let v = SkillControllerVersion.string
         switch guide.status {
-        case .outdated(let installed), .ahead(let installed):
-            return "检测到已装 skillctl \(installed)，与当前 App（\(v)）不一致。把下面的提示词复制给你的任意 Agent，由它覆盖升级并回报版本。"   // C8
+        case .outdated(let installed):
+            return "检测到已装 skillctl \(installed)，GitHub 最新发布版为 \(guide.latestVersion ?? "未知")。把下面的提示词复制给你的任意 Agent，由它覆盖升级并回报版本。"
+        case .ahead(let installed):
+            return "已装 skillctl \(installed)，高于 GitHub 最新发布版 \(guide.latestVersion ?? "未知")。"
         case .current:
-            // 不应到达：Sheet 无 current 变体（§2.3）。不发明新文案——C3 是设计档唯一定过的一致态句。
-            return "已装 skillctl \(v)（与 App 一致）"   // C3
+            return "已装 skillctl \(guide.latestVersion ?? "未知")（与 GitHub 最新发布版一致）"
+        case .latestUnavailable(_, let note):
+            return "暂时无法检查 GitHub 最新发布版（\(note)）。"
         case .notInstalled, nil:
-            return "本机的 Agent 装配经命令行工具 skillctl 完成；当前没有在 PATH 上检测到它。把下面的提示词复制给你的任意 Agent，由它代为安装并回报版本。"   // C7
+            return "本机的 Agent 装配经命令行工具 skillctl 完成；当前没有在 PATH 上检测到它。GitHub 最新发布版为 \(guide.latestVersion ?? "未知")。把下面的提示词复制给你的任意 Agent，由它代为安装并回报版本。"
         }
     }
 }

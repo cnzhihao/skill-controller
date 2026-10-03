@@ -1,12 +1,12 @@
 # Skill Controller
 
-全盘 Skill/MCP 清单 · Agent 自主装配 · 文件级可回滚 — 一个纯本地的 macOS 工具。
+全盘 Skill/MCP 清单 · Agent 自主装配 · 文件级可回滚 — 数据留在本机的 macOS 工具。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Platform: macOS](https://img.shields.io/badge/platform-macOS%2014%2B-black)
 ![Swift](https://img.shields.io/badge/Swift-6-orange)
 
-**English**: Skill Controller is a native SwiftUI app for macOS that gives you a complete, at-a-glance inventory of every Agent Skill and MCP configuration on your machine, organized by agent, scope (user/project), and project. Management actions are delegated to your AI agents via the `skillctl` CLI — humans observe and verify, agents assemble; every write operation is logged, trashed, and one-step reversible. Fully local: zero cloud, zero network requests, zero telemetry.
+**English**: Skill Controller is a native SwiftUI app for macOS that gives you a complete, at-a-glance inventory of every Agent Skill and MCP configuration on your machine, organized by agent, scope (user/project), and project. Management actions are delegated to your AI agents via the `skillctl` CLI — humans observe and verify, agents assemble; every write operation is logged, trashed, and one-step reversible. Data stays local with no telemetry. On startup, the CLI setup guide makes one unauthenticated request to GitHub Releases metadata to check for CLI updates; it does not download binaries automatically.
 
 ---
 
